@@ -1,1 +1,83 @@
-# bharath
+# System Monitoring Dashboard — README
+
+This project is a small cross-platform system monitoring and process management tool built with Tkinter.
+
+File
+- `import tkinter as tk.py` — main application source (recommend renaming to `system_dashboard.py` to avoid confusion with module import syntax).
+
+Dependencies
+- `tkinter` — Python's standard GUI toolkit; used for the UI (labels, listbox, buttons, dialogs).
+- `psutil` (optional but recommended) — cross-platform library used for:
+  - CPU usage (`psutil.cpu_percent`) and per-process CPU usage (`Process.cpu_percent`).
+  - Memory usage (`psutil.virtual_memory`).
+  - Process enumeration (`psutil.process_iter`) and process termination/inspection (`psutil.Process`).
+  If not installed, the program falls back to limited Unix-only `/proc` and `ps` behavior where available.
+- Standard library modules used:
+  - `subprocess` — used as a fallback to call system tools like `ps` or `taskkill` when psutil is not available.
+  - `time` — used for short sampling delays when needed.
+  - `platform` — to detect OS for fallbacks and platform-specific commands.
+  - `os` — general OS utilities (imported for potential extension).
+  - `messagebox` from `tkinter` — dialogs for errors, confirmations and process info.
+
+What the program reads / uses at runtime
+- On systems with `psutil` installed (recommended):
+  - CPU percentage via `psutil.cpu_percent(interval=0.1)`.
+  - Memory stats via `psutil.virtual_memory()`.
+  - Process list via `psutil.process_iter(['pid','name','username'])`, and then per-process `cpu_percent()` and `memory_percent()`.
+  - Process details: `p.exe()`, `p.cmdline()`, `p.username()`, `p.status()`, `p.num_threads()`, `p.memory_info()`.
+
+- If `psutil` is NOT installed:
+  - On Linux the script tries to read `/proc/stat` and `/proc/meminfo` to compute CPU and memory usage. Note: `/proc` is Linux-specific and does not exist on Windows.
+  - For processes the script falls back to running `ps aux` and parsing its output (Unix-only). To kill processes it will call `kill -9` (Unix) or `taskkill` (Windows when the fallback path is used).
+
+Why psutil is recommended
+- `psutil` provides a reliable, cross-platform way to collect system stats and manage processes. It removes platform-specific parsing of `/proc` and `ps` output and avoids many edge cases.
+
+UI behavior and features
+- Top labels show:
+  - CPU Usage (updated every second via Tkinter's `after` loop). Uses a short sampling interval to produce a meaningful percent.
+  - Memory Usage (updated every second).
+- Process list area:
+  - Lists processes with PID, CPU%, MEM%, User and command.
+  - Options to filter system processes (checkbox) and sort by CPU, memory, PID, or name.
+  - Double-click a process to inspect details (executable, cmdline, user, status, thread count, memory).
+  - Select a process and click "Kill Selected Process" to attempt to terminate it. The script attempts graceful `terminate()` first, then `kill()` if necessary. On Windows, it uses `taskkill` as a fallback.
+
+Threading and UI safety
+- The code uses Tkinter's `after()` scheduling to update CPU and memory values on the main thread. This avoids updating Tk widgets from background threads (which raises "main thread is not in main loop" errors).
+
+Permissions and limitations
+- Killing processes often requires elevated privileges. If a kill or inspection fails due to permission, the app shows an error dialog.
+- Per-process CPU percent may appear as 0.0 initially; psutil usually needs a sampling interval to compute CPU percentages.
+- If `psutil` is missing on Windows, many features will be limited because the fallback is Unix-specific.
+
+How to run
+1. (Recommended) Install dependencies:
+
+```powershell
+python -m pip install -r "c:\Users\Bharath\OneDrive\Desktop\python\requirements.txt"
+```
+
+2. Run the app:
+
+```powershell
+python "c:\Users\Bharath\OneDrive\Desktop\python\import tkinter as tk.py"
+```
+
+Notes and suggestions
+- Rename the file to `system_dashboard.py` to avoid confusion with the `import tkinter as tk` syntax.
+- Consider running the script from an elevated prompt if you need to kill system processes.
+- You can add filtering, alert thresholds (e.g., highlight processes using > X% CPU), or export a snapshot of processes to CSV as future enhancements.
+
+Troubleshooting
+- If you see FileNotFoundError for `/proc/stat` on Windows: install `psutil` or run under WSL/Linux. The updated script prefers psutil and should not attempt `/proc` on Windows.
+- If the GUI crashes with "main thread is not in main loop", ensure the script is the updated one that uses `after()` rather than a background thread.
+
+Contact / Follow-ups
+- If you want, I can:
+  - Rename the file and update run instructions automatically.
+  - Add a small README section for troubleshooting common permission errors on Windows.
+  - Add an export (CSV) and a small alerting UI.
+
+---
+Generated by the editor automation to document how the code collects and manages system data.
