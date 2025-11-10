@@ -65,7 +65,6 @@ python "c:\Users\Bharath\OneDrive\Desktop\python\import tkinter as tk.py"
 ```
 
 Notes and suggestions
-- Rename the file to `system_dashboard.py` to avoid confusion with the `import tkinter as tk` syntax.
 - Consider running the script from an elevated prompt if you need to kill system processes.
 - You can add filtering, alert thresholds (e.g., highlight processes using > X% CPU), or export a snapshot of processes to CSV as future enhancements.
 
