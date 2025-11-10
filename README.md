@@ -64,13 +64,4 @@ python -m pip install -r "c:\Users\Bharath\OneDrive\Desktop\python\requirements.
 python "c:\Users\Bharath\OneDrive\Desktop\python\import tkinter as tk.py"
 ```
 
-Notes and suggestions
-- Consider running the script from an elevated prompt if you need to kill system processes.
-- You can add filtering, alert thresholds (e.g., highlight processes using > X% CPU), or export a snapshot of processes to CSV as future enhancements.
-
-Troubleshooting
-- If you see FileNotFoundError for `/proc/stat` on Windows: install `psutil` or run under WSL/Linux. The updated script prefers psutil and should not attempt `/proc` on Windows.
-- If the GUI crashes with "main thread is not in main loop", ensure the script is the updated one that uses `after()` rather than a background thread.
-
-
 ---
